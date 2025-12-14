@@ -1,0 +1,140 @@
+:root {
+    --colour1-background: 2, 2, 43;
+    --colour1-text: 212, 212, 212;
+    --colour1-accent: 194, 162, 126;
+    --colour1-accent-text: 0, 0, 0;
+}
+
+body {
+    background-color: rgb(var(--colour1-background));
+    color: rgb(var(--colour1-text));
+}
+
+#record-open-btn {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    font-size: 40px;
+    padding: 15px 19px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgb(var(--colour1-text));
+    color: rgb(var(--colour1-background));
+}
+#record-open-btn:hover {
+    background-color: rgb(var(--colour1-accent));
+}
+.overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.3);
+    z-index: 40;
+}
+#record-box {
+    margin: 50px auto;
+    width: 75%;
+    background-color: black;
+    z-index: 50;
+    padding: 10px;
+}
+input, textarea, select {
+    background-color: rgb(var(--colour1-background));
+    border: 1px solid rgba(var(--colour1-text), 0.8);
+    color: rgb(var(--colour1-text));
+    font-size: 18px;
+    padding: 5px;
+}
+label {
+    font-size: 18px;
+}
+#study-form {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 12px;
+    margin: 15px;
+}
+#record-btn {
+    display: block;
+    margin: 0 auto 10px auto;
+    padding: 8px 20px; 
+    font-size: 20px;
+    background-color: rgb(var(--colour1-background));
+    color: rgb(var(--colour1-text));
+    border: 1px solid rgba(var(--colour1-text), 0.8);
+    border-radius: 2px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+#record-btn:hover {
+    background-color: rgb(var(--colour1-accent));
+    color: rgb(var(--colour1-accent-text));
+    transition: all 0.2s ease;
+}
+.overlay.hidden {
+    display: none !important;
+    transition: all 0.2s ease;
+}
+
+/* tab */
+#tab-heading {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+}
+#tab-heading button {
+    border: none;
+    background-color: rgb(var(--colour1-background));
+    color: rgb(var(--colour1-text));
+    width: 100px;
+    height: 40px;
+    font-size: 25px;
+}
+#tab-heading button.active {
+    background-color: rgb(var(--colour1-accent));
+    color: rgb(var(--colour1-accent-text));
+}
+
+/* table */
+#tab-table {
+    margin-top: 20px;
+}
+#list-control {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 5px;
+}
+#study-table {
+    margin: 0 auto;
+    text-align: center;
+    border-collapse: collapse;
+}
+th {
+    background-color: rgba(var(--colour1-text), 0.8);
+    color: rgb(var(--colour1-background));
+    height: 25px;
+}
+tbody td {
+    height: 28px;
+}
+.list-date {
+    width: 100px;
+    border: 1px solid rgba(var(--colour1-text), 0.3);
+}
+.list-time {
+    width: 95px;
+    border: 1px solid rgba(var(--colour1-text), 0.3);
+}
+.list-contents {
+    width: 300px;
+    border: 1px solid rgba(var(--colour1-text), 0.3);
+}
+.list-category {
+    width: 120px;
+    border: 1px solid rgba(var(--colour1-text), 0.3);
+}
+.trash, .edit {
+    width: 35px;
+}
+tfoot tr td {
+    text-align: right;
+}

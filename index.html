@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Study log</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://kit.fontawesome.com/20b7c06391.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <button id="record-open-btn"><i class="fa-solid fa-pen"></i></button>
+        <div class="overlay hidden">
+            <div id="record-box">
+                <form id="study-form">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required>
+                    <label for="time">Study Time(min):</label>
+                    <input type="number" id="time" name="time" min="0" required>
+                    <label for="contents">Study Contents:</label>
+                    <textarea id="contents" name="contents" placeholder="Input Study Contents..." rows="10" cols="60"></textarea>
+                    <label for="category">Category:</label>
+                    <select id="category">
+                        <option value="English">English</option>
+                        <option value="Programming">Programming</option>
+                        <option value="others">Others</option>
+                    </select>
+                </form>
+                <button id="record-btn" type="submit">Record</button>
+            </div>
+        </div>
+
+        <div id="tab-heading">
+            <button id="tab-table-btn" class="active">Table</button>
+        </div>
+        <div id="tab">
+            <div id="tab-table" class="active">
+                <form id="list-control">
+                    <select id="study-table-sort">
+                        <option value="date-asc">Date Ascending</option>
+                        <option value="date-des">Date Descending</option>
+                        <option value="time-asc">Time Ascending</option>
+                        <option value="time-des">Time Descending</option>
+                        <option value="category">Category</option>
+                    </select>
+                    
+                </form>
+                <table id="study-table">
+                    <thead>
+                        <tr>
+                            <th class="list-date">Date</th>
+                            <th class="list-time">Study time</th>
+                            <th class="list-contents">Contents</th>
+                            <th class="list-category">Category</th>
+                        </tr>
+                    </thead>
+                    <tbody id="study-list">
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>Sum:</td>
+                            <td id="sum"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
