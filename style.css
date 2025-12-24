@@ -138,3 +138,9 @@ tbody td {
 tfoot tr td {
     text-align: right;
 }
+.trash:hover {
+    color: rgb(var(--colour1-accent));
+}
+.edit:hover {
+    color: rgb(var(--colour1-accent));
+}

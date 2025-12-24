@@ -5,6 +5,7 @@ const recordBtn = document.getElementById('record-btn');
 const studyList = document.getElementById('study-list');
 const studySortType = document.getElementById('study-table-sort');
 let studyLog = [];
+let editingIndex = null;
 
 window.addEventListener('DOMContentLoaded', init);
 
@@ -20,6 +21,17 @@ overlay.addEventListener('click', (e)=> {
     }
 });
 studySortType.addEventListener('change', renderList);
+studyList.addEventListener('click', (e) => {
+    console.log("target:", e.target);
+    console.log("e.target.closest('.edit'):", e.target.closest('.edit'));
+    console.log("e.target.closest('tr'):", e.target.closest('tr'));
+
+    const editBtn = e.target.closest('.edit');
+    if (!editBtn) return;
+
+    const tr = editBtn.closest('tr');
+    itemEdit(Number(tr.dataset.id));
+});
 
 
 function openModal() {
@@ -41,9 +53,21 @@ function formSubmit() {
         return;
     }
 
-    const id = Date.now();
-    studyLog.push({id, date, time, contents, category});
-    console.log(studyLog);
+    if (editingIndex !== null) {
+        const original = studyLog[editingIndex];
+        studyLog[editingIndex] = {
+            ...original,
+            date,
+            time,
+            contents,
+            category
+        };
+        editingIndex = null;
+    } else {
+        const id = Date.now();
+        studyLog.push({id, date, time, contents, category});
+    }
+
     renderList();
     saveStorage();
     form.reset();
@@ -77,6 +101,7 @@ function renderList() {
 
     sortedList.forEach((e) => {
         const tr = document.createElement('tr');
+        tr.dataset.id = e.id;
 
         tr.innerHTML = `
             <td class="list-date">${e.date}</td>
@@ -94,6 +119,19 @@ function renderList() {
         return total + e.time;
     }, 0);
     sum.innerText = sumValue + "min.";
+}
+
+function itemEdit(id) {
+    console.log('editing start');
+    editingIndex = studyLog.findIndex(e => e.id === id);
+    if (editingIndex === -1) return;
+    const s = studyLog[editingIndex];
+    
+    openModal();
+    document.getElementById('date').value = s.date;
+    document.getElementById('time').value = s.time;
+    document.getElementById('contents').value = s.contents;
+    document.getElementById('category').value = s.category;
 }
 
 function saveStorage() {
