@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Interest Record</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://kit.fontawesome.com/20b7c06391.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <section id="genre-list" class="hidden">
+            <h1>Interest Record</h1>
+            <div class="wrapper">
+                <div class="genre-grid sweep-hover">
+                    <h3>Sample</h3>
+                    <p>DD - MM - YYYY</p>
+                </div>
+                <div id="add-grid" class="genre-grid sweep-hover">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </div>
+        </section>
+
+        <section id="genre-detail" class="">
+            <header class="detail-header">
+                <button class="close-detail-btn"><i class="fa-solid fa-xmark"></i></button>
+                <h1 class="genre-title">Sample</h1>
+                <div></div>
+            </header>
+
+            <ul class="entry-list">
+                <li class="entry-item">
+                    <iframe class="entry-thumbnail" width="368" height="207" src="https://www.youtube.com/embed/DNqQIRLwD0s?si=3ndB3ViJg2A0v7eq" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <div class="entry-info">
+                        <a href="#" target="_blank" class="entry-title">--(want to get title automatically)</a>
+                    </div>
+                    <p class="entry-date">10/01/2026</p>
+                    <p class="entry-memo">Memo</p>
+                    <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+                </li>
+                <li id="add-item" class="entry-item sweep-hover">
+                    <i class="fa-solid fa-plus"></i>
+                </li>
+            </ul>
+            
+            <footer class="detail-footer">
+                <textarea placeholder="Overall Memo" class="overall-memo"></textarea>
+            </footer>
+        </section>
+
+        <div id="edit-genre-modal" class="overlay hidden">
+            <div id="edit-genre">
+                <h2>Create New Genre</h2>
+                <form id="genre-form">
+                    <label for="genre-name">Genre Name</label>
+                    <input type="text" id="genre-name" name="genre-name" required>
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" required>
+                </form>
+                <div id="genre-btn">
+                    <button id="genre-cancel-btn">Cancel</button>
+                    <button id="genre-submit-btn">Create</button>
+                </div>
+            </div>
+        </div>
+        <div id="edit-detail-modal" class="overlay hidden">
+            <div id="edit-detail">
+                <h2>Create New Detail</h2>
+                <form id="detail-form">
+                    <label for="detail-url">URL</label>
+                    <input type="url" id="detail-url" name="detail-url" required>
+                    <label for="detail-date">Date</label>
+                    <input type="date" id="detail-date" name="detail-date" required>
+                    <label for="detail-memo">Memo</label>
+                    <textarea id="detail-memo" name-detail-memo></textarea>
+                </form>
+                <div id="detail-btn">
+                    <button id="detail-cancel-btn">Cancel</button>
+                    <button id="detail-submit-btn">Create</button>
+                </div>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>

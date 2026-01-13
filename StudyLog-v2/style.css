@@ -1,0 +1,250 @@
+*, ::before, ::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --colour1-background: 250, 246, 242;
+    --colour1-text: 39, 39, 39;
+    --colour1-accent: 15, 29, 110;
+    --colour1-accent-text: 255, 255, 255;
+}
+
+/*  utility / effect  */
+.sweep-hover {
+    position: relative;
+    overflow: hidden;
+}
+
+.sweep-hover:hover {
+    transform: scale(1.01);
+}
+
+.sweep-hover::before {
+    content: "";
+    position: absolute;
+    inset: var(--sweep-inset, -30%);
+    width: var(--sweep-width, 120px);
+    background-color: rgba(var(--colour1-accent), 0.1);
+    transform: translateX(0) skewX(-20deg);
+    transform-origin: top left;
+    transition: transform var(--sweep-duration, 0.3s) ease;
+    z-index: var(--sweep-z-index, -1);
+}
+
+.sweep-hover:hover::before {
+    transform: translateX(var(--sweep-distance, 300%)) skewX(-20deg);
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.3);
+}
+
+/*  components  */
+#genre-list {
+    background-color: rgb(var(--colour1-background));
+}
+
+#genre-list h1 {
+    text-align: center;
+    margin: 30px 0 50px 0;
+    font-size: 35px;
+}
+
+#genre-list .wrapper {
+    display: flex;
+    gap: 10px;
+    margin: 20px;
+}
+
+.genre-grid {
+    position: relative;
+    border: 1px solid rgb(var(--colour1-text));
+    border-radius: 3px;
+    width: 350px;
+    height: 200px;
+    padding: 0 8px;
+    text-align: center;
+    box-shadow: 3px 3px 5px rgb(177, 177, 177);
+    overflow: hidden;
+}
+
+#add-grid {
+    position: relative;
+    border: 1.5px dashed rgba(var(--colour1-text), 0.3);
+}
+
+#add-grid i {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 25px;
+    height: 25px;
+    font-size: 35px;
+    color: rgba(var(--colour1-text), 0.7);
+}
+
+#genre-detail {
+    position: fixed;
+    inset: 0;
+    background-color: rgb(var(--colour1-background));
+    text-align: center;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.close-detail-btn {
+    font-size: 33px;
+    padding-left: 20px;
+    border: none;
+    background-color: transparent;
+}
+
+.entry-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
+}
+
+.entry-item {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 10px;
+    border: 1.5px solid rgb(var(--colour1-accent));
+    font-size: 20px;
+    width: 98vw;
+    height: 210px;
+    margin: 3px auto;
+}
+
+.entry-thumbnail {
+    grid-area: 1 / 1 / 4 / 5;
+}
+
+.entry-info {
+    grid-area: 1 / 5 / 3 / 11;
+    margin: auto;
+}
+
+.entry-date {
+    grid-area: 3 / 5 / 4 / 11;
+    text-align: right;
+}
+
+.entry-memo {
+    grid-area: 1 / 11 / 4 / 15;
+}
+
+.entry-ellipsis {
+    grid-area: 1 / 15 / 2 / 16;
+    padding: 10px 15px;
+    margin: 10px;
+}
+
+#add-item {
+    position: relative;
+    border: 1.5px dashed rgba(var(--colour1-accent), 0.3);
+    --sweep-inset: -8vw;
+    --sweep-width: 150px;
+    --sweep-distance: 97vw;
+}
+
+#add-item i {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 25px;
+    height: 25px;
+    font-size: 35px;
+    color: rgba(var(--colour1-text), 0.7);
+}
+
+.overall-memo {
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    padding: 10px;
+    width: 98vw;
+    height: 20vh;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+#edit-genre, #edit-detail {
+    margin: 70px auto;
+    width: 400px;
+    background-color: rgb(var(--colour1-background));
+    z-index: 50;
+    padding: 10px;
+}
+
+#edit-genre h2, #edit-detail h2 {
+    margin: 10px 0 10px 10px;
+}
+
+#genre-form, #detail-form {
+    display: flex;
+    flex-direction: column;
+    margin: 0 15px;
+}
+
+#genre-form label, #detail-form label {
+    font-size: 16px;
+    padding: 5px 0;
+}
+
+#genre-form input, #detail-form input {
+    height: 40px;
+    padding: 5px 10px;
+    margin: 0 3px 5px 3px;
+    font-size: 22px;
+}
+
+#detail-form textarea {
+    height: 80px;
+}
+
+#genre-btn, #detail-btn {
+    text-align: right;
+    margin: 20px 15px 10px 0;
+}
+
+#genre-cancel-btn, #detail-cancel-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    margin: 0 15px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 8px 15px;
+}
+
+#genre-cancel-btn:hover, #detail-cancel-btn:hover {
+    background-color: rgba(0,0,0,0.2);
+}
+
+#genre-submit-btn, #detail-submit-btn {
+    background-color: rgb(var(--colour1-accent));
+    color: rgb(var(--colour1-accent-text));
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 8px 15px;
+    font-size: 18px;
+    box-shadow: 1px 1px 3px grey;
+}
+
+#genre-submit-btn:hover, #detail-submit-btn:hover {
+    border: 1px solid rgb(var(--colour1-background));
+    box-shadow: none;
+}
+
+.hidden {
+    display: none !important;
+}
