@@ -42,7 +42,7 @@
 }
 
 /*  components  */
-#genre-list {
+body {
     background-color: rgb(var(--colour1-background));
 }
 
@@ -97,9 +97,16 @@
     justify-content: space-between;
 }
 
-.close-detail-btn {
+#close-detail-btn {
     font-size: 33px;
     padding-left: 20px;
+    border: none;
+    background-color: transparent;
+}
+
+#detail-ellipsis {
+    font-size: 33px;
+    padding-right: 30px;
     border: none;
     background-color: transparent;
 }
