@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let editGenreId = null;
     let editingDetailId = null;
 
+    loadStorage();
     addGridBtn.addEventListener ("click", () => {
         editGenreModal.classList.remove("hidden");
     });
@@ -61,9 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     }
 
-    function renderGenreDetail(genreId) {
+    function renderGenreDetail(genreId) { 
         selectedGenreId = genreId;
-        const genre = genreListSection.find(g => g.id === genreId);
+        const genre = interestRecord.find(g => g.id === genreId);
         if (!genre) return;
 
         genreTitle.textContent = genre.name;
@@ -74,15 +75,46 @@ document.addEventListener("DOMContentLoaded", () => {
             const li = document.createElement("li");
             li.className = "entry-item";
 
-            li.innerHTML = `
-                <div class="entry-info">
-                    <a href="${detail.url} target="_blank" class="entry.title"></a>
-                </div>
-                <p class="entry-date">${detail.date}</p>
-                <p class="entry-memo">${detail.memo}</p>
-                <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
-            `;
-
+            if(detail.type == "youtube") {
+                li.innerHTML = `
+                    <iframe 
+                        class="entry-thumbnail" 
+                        width="368" 
+                        height="207" 
+                        src="https://www.youtube.com/embed/${detail.source}" 
+                        title="YouTube video player" 
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                    ></iframe>
+                    <div class="entry-info">
+                        <a
+                            href="https://www.youtube.com/watch?v=${detail.source}"
+                            target="_blank"
+                            class="entry-title"
+                        >${detail.title}</a>
+                    </div>
+                    <p class="entry-date">${detail.date}</p>
+                    <p class="entry-memo">${detail.memo}</p>
+                    <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+                `;
+            } else {
+                li.innerHTML = `
+                    <div class="favicon">
+                        <img src="https://www.google.com/s2/favicons?domain=${detail.source}">
+                    </div>
+                    <div class="entry-info">
+                        <a 
+                            href="${detail.source}" 
+                            target="_blank" 
+                            class="entry-title"
+                        >${detail.title}</a>
+                    </div>
+                    <p class="entry-date">${detail.date}</p>
+                    <p class="entry-memo">${detail.memo}</p>
+                    <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+                `
+            }
             entryList.appendChild(li);
         });
 
@@ -117,58 +149,88 @@ document.addEventListener("DOMContentLoaded", () => {
             interestRecord.push(newGenre);
         }
         editGenreModal.classList.add("hidden");
-        // name = "";
-        // date = "";
+        saveStorage();
+        document.getElementById("genre-name").value = "";
+        document.getElementById("date").value = "";
         renderGenreList();
     }
 
     function handleDetailSubmit(e) {
         e.preventDefault();
 
-
-        const url = document.getElementById("detail-url").value.trim();
+        const source = document.getElementById("detail-source").value.trim();
+        const title = document.getElementById("detail-title").value;
         const date = document.getElementById("detail-date").value || getTodayString();
         const memo = document.getElementById("detail-memo").value;
 
-        if(!url) {
+        if(!source) {
         alert('input Website or Video at least');
         return;
         }
 
         const genre = interestRecord.find(g => g.id === selectedGenreId);
         if (!genre) return;
-        console.log("handle detail submit");
+
+        const youtubeId = extractYouTubeId(source);
+        const detailData = {
+            type: youtubeId ? "youtube" : "link",
+            source: youtubeId ?? source,
+            title,
+            date,
+            memo
+        };
 
         if (editingDetailId !== null) {
             const detail = genre.details.find(d => d.id === editingDetailId);
-            if (detail) {
-                detail.url = url;
-                detail.date = date;
-                detail.memo = memo;
-            }
+            Object.assign(detail, detailData);
             editingDetailId = null;
         } else {
-            const newDetail = {
+            genre.details.push({
                 id: Date.now(),
-                url,
-                date,
-                memo
-            };
-            genre.details.push(newDetail);
+                ...detailData
+            });
         }
-        console.log(interestRecord);
         editDetailModal.classList.add("hidden");
-        url = "";
-        date = "";
-        memo = "";
+        saveStorage();
+        document.getElementById("detail-source").value = "";
+        document.getElementById("detail-title").value = "";
+        document.getElementById("detail-date").value = "";
+        document.getElementById("detail-memo").value = "";
         renderGenreDetail(selectedGenreId);
     }
-})
 
-function getTodayString() {
+    function saveStorage() {
+        localStorage.setItem("interestRecord", JSON.stringify(interestRecord));
+    }
+
+    function loadStorage() {
+        const saved = localStorage.getItem("interestRecord");
+        if (saved) {
+            interestRecord = JSON.parse(saved);
+            renderGenreList();
+        }
+    }
+
+    function getTodayString() {
     const date = new Date();
     const y = date.getFullYear();
     const m = String(date.getMonth()+1).padStart(2, "0");
     const d = String(date.getDate()).padStart(2, "0");
     return `${y}-${m}-${d}`;
-}
+    }
+
+    function extractYouTubeId (url) {
+    const regex = [
+        /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/
+    ]
+
+    for (const pattern of regex) {
+        const match = url.match(pattern);
+        if (match) return match[1];
+    }
+
+    return null;
+    }
+})

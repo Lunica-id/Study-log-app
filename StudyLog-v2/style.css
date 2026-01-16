@@ -115,7 +115,8 @@ body {
     display: flex;
     flex-direction: column;
     padding: 0;
-    overflow-y: auto;
+    overflow-y: scroll;
+    height: calc(80vh - 120px);
 }
 
 .entry-item {
@@ -125,13 +126,26 @@ body {
     grid-column-gap: 10px;
     border: 1.5px solid rgb(var(--colour1-accent));
     font-size: 20px;
-    width: 98vw;
+    width: 97vw;
     height: 210px;
     margin: 3px auto;
 }
 
 .entry-thumbnail {
     grid-area: 1 / 1 / 4 / 5;
+}
+
+.favicon {
+    grid-area: 1 / 1 / 4 / 5;
+    margin: auto 0;
+}
+
+.favicon img {
+    width: 60px;
+    height: 60px;
+    padding: 10px;
+    background-color: rgba(var(--colour1-accent), 0.05);
+    border-radius: 4px;
 }
 
 .entry-info {
@@ -146,6 +160,9 @@ body {
 
 .entry-memo {
     grid-area: 1 / 11 / 4 / 15;
+    background-color: rgba(var(--colour1-accent), 0.05);
+    padding: 10px;
+    margin: 10px;
 }
 
 .entry-ellipsis {
@@ -157,6 +174,7 @@ body {
 #add-item {
     position: relative;
     border: 1.5px dashed rgba(var(--colour1-accent), 0.3);
+    min-height: 210px;
     --sweep-inset: -8vw;
     --sweep-width: 150px;
     --sweep-distance: 97vw;
@@ -181,7 +199,7 @@ body {
     padding: 10px;
     width: 98vw;
     height: 20vh;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgb(255, 255, 255);
 }
 
 #edit-genre, #edit-detail {
