@@ -23,12 +23,18 @@
                 <h1 class="genre-title">Sample</h1>
                 <button id="detail-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </header>
-
-            <ul class="entry-list">
-                <li id="add-item" class="entry-item sweep-hover">
-                    <i class="fa-solid fa-plus"></i>
-                </li>
-            </ul>
+            <main class="none-scrollbar">
+                <div class="wrapper none-scrollbar">
+                    <div id="add-subgrid" class="genre-grid sweep-hover">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                </div>
+                <ul class="entry-list none-scrollbar">
+                    <li id="add-item" class="entry-item sweep-hover">
+                        <i class="fa-solid fa-plus"></i>
+                    </li>
+                </ul>   
+            </main>
             
             <footer class="detail-footer">
                 <textarea placeholder="Overall Memo" class="overall-memo"></textarea>
@@ -68,6 +74,14 @@
                     <button id="detail-submit-btn">Create</button>
                 </div>
             </div>
+        </div>
+        <div id="control-genre-modal" class="hidden">
+            <p id="edit-genre-btn" class="control-modal">Edit</p>
+            <p id="delete-genre-btn" class="control-modal">Delete</p>
+        </div>
+        <div id="control-detail-modal" class="hidden">
+            <p id="edit-detail-btn" class="control-modal">Edit</p>
+            <p id="delete-detail-btn" class="control-modal">Delete</p>
         </div>
         <script src="script.js"></script>
     </body>

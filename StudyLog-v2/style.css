@@ -41,6 +41,16 @@
     background-color: rgba(0,0,0,0.3);
 }
 
+.none-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.none-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+
 /*  components  */
 body {
     background-color: rgb(var(--colour1-background));
@@ -52,10 +62,20 @@ body {
     font-size: 35px;
 }
 
-#genre-list .wrapper {
+#genre-list .wrapper, #genre-detail main .wrapper {
     display: flex;
     gap: 10px;
+}
+
+#genre-list .wrapper {
+    flex-wrap: wrap;
     margin: 20px;
+}
+
+#genre-detail main .wrapper {
+    padding-bottom: 10px;
+    margin: 5px 15px;
+    overflow-x: scroll;
 }
 
 .genre-grid {
@@ -70,12 +90,12 @@ body {
     overflow: hidden;
 }
 
-#add-grid {
+#add-grid, #add-subgrid {
     position: relative;
     border: 1.5px dashed rgba(var(--colour1-text), 0.3);
 }
 
-#add-grid i {
+#add-grid i, #add-subgrid i {
     position: absolute;
     inset: 0;
     margin: auto;
@@ -90,6 +110,7 @@ body {
     inset: 0;
     background-color: rgb(var(--colour1-background));
     text-align: center;
+    height: calc(80vh - 10px);
 }
 
 .detail-header {
@@ -111,32 +132,38 @@ body {
     background-color: transparent;
 }
 
+#genre-detail main {
+    height: calc(80vh - 100px);
+    overflow-y: scroll;
+}
+
 .entry-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     padding: 0;
-    overflow-y: scroll;
-    height: calc(80vh - 120px);
+    margin: 0 15px 10px 15px;
+    overflow-x: scroll;
 }
 
 .entry-item {
     display: grid;
-    grid-template-columns: repeat(15, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    grid-row-gap: 5px;
     grid-column-gap: 10px;
     border: 1.5px solid rgb(var(--colour1-accent));
     font-size: 20px;
-    width: 97vw;
-    height: 210px;
-    margin: 3px auto;
+    min-width: 370px;
+    height: 430px;
+    margin: 0 3px;
 }
 
 .entry-thumbnail {
-    grid-area: 1 / 1 / 4 / 5;
+    grid-area: 1 / 1 / 4 / 9;
 }
 
 .favicon {
-    grid-area: 1 / 1 / 4 / 5;
+    grid-area: 1 / 1 / 4 / 9;
     margin: auto 0;
 }
 
@@ -149,24 +176,25 @@ body {
 }
 
 .entry-info {
-    grid-area: 1 / 5 / 3 / 11;
+    grid-area: 4 / 2 / 6 / 7;
     margin: auto;
 }
 
 .entry-date {
-    grid-area: 3 / 5 / 4 / 11;
-    text-align: right;
+    grid-area: 6 / 5 / 7 / 8;
+    text-align: center;
 }
 
 .entry-memo {
-    grid-area: 1 / 11 / 4 / 15;
+    grid-area: 6 / 1 / 7 / 5;
     background-color: rgba(var(--colour1-accent), 0.05);
     padding: 10px;
     margin: 10px;
+    overflow-y: auto;
 }
 
 .entry-ellipsis {
-    grid-area: 1 / 15 / 2 / 16;
+    grid-area: 4 / 7 / 5 / 9;
     padding: 10px 15px;
     margin: 10px;
 }

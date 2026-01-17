@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         >${detail.title}</a>
                     </div>
                     <p class="entry-date">${detail.date}</p>
-                    <p class="entry-memo">${detail.memo}</p>
+                    <p class="entry-memo">Memo</p>
                     <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
                 `;
             } else {
@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         >${detail.title}</a>
                     </div>
                     <p class="entry-date">${detail.date}</p>
-                    <p class="entry-memo">${detail.memo}</p>
+                    <p class="entry-memo">Memo</p>
                     <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
                 `
             }
