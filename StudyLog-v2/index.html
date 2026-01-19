@@ -19,7 +19,7 @@
 
         <section id="genre-detail" class="hidden">
             <header class="detail-header">
-                <button id="close-detail-btn"><i class="fa-solid fa-xmark"></i></button>
+                <button id="close-detail-btn"><i class="fa-solid fa-arrow-left"></i></button>
                 <h1 class="genre-title">Sample</h1>
                 <button id="detail-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </header>
@@ -43,7 +43,7 @@
 
         <div id="edit-genre-modal" class="overlay hidden">
             <div id="edit-genre">
-                <h2>Create New Genre</h2>
+                <h2 id="edit-genre-type">Create New Genre</h2>
                 <form id="genre-form">
                     <label for="genre-name">Genre Name</label>
                     <input type="text" id="genre-name" name="genre-name" required>
@@ -58,10 +58,10 @@
         </div>
         <div id="edit-detail-modal" class="overlay hidden">
             <div id="edit-detail">
-                <h2>Create New Detail</h2>
+                <h2 id="edit-detail-type">Create New Detail</h2>
                 <form id="detail-form">
                     <label for="detail-source">URL</label>
-                    <input type="url" id="detail-source" name="detail-source" required>
+                    <input type="url" id="detail-source" name="detail-source">
                     <label for="detail-title">Title</label>
                     <input type="text" id="detail-title" name="detail-title" required>
                     <label for="detail-date">Date</label>

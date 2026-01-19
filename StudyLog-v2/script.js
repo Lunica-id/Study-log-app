@@ -1,128 +1,170 @@
 document.addEventListener("DOMContentLoaded", () => {
     const genreListSection = document.getElementById("genre-list");
-    const genreWrapper = genreListSection.querySelector(".wrapper");
+    const rootGenreWrapper = genreListSection.querySelector("#genre-list .wrapper");
     const addGridBtn = document.getElementById("add-grid");
     const addItemBtn = document.getElementById("add-item");
     const detailSection = document.getElementById("genre-detail");
     const genreTitle = detailSection.querySelector(".genre-title");
     const entryList = detailSection.querySelector(".entry-list");
     const closeDetailBtn = document.getElementById("close-detail-btn");
+    const subGenreWrapper = document.querySelector("#genre-detail .wrapper");
+    const addSubGridBtn = document.getElementById("add-subgrid");
     const editGenreModal = document.getElementById("edit-genre-modal");
+    const editGenreType = document.getElementById("edit-genre-type");
     const genreCancelBtn = document.getElementById("genre-cancel-btn");
     const genreSubmitBtn = document.getElementById("genre-submit-btn");
     const editDetailModal = document.getElementById("edit-detail-modal");
+    const editDetailType = document.getElementById("edit-detail-type");
     const detailCancelBtn = document.getElementById("detail-cancel-btn");
     const detailSubmitBtn = document.getElementById("detail-submit-btn");
+    const controlDetailModal = document.getElementById("control-detail-modal");
+    const editDetailBtn = document.getElementById("edit-detail-btn");
+    const deleteDetailBtn = document.getElementById("delete-detail-btn");
+
 
     let interestRecord = [];
-    let selectedGenreId = null;
-    let editGenreId = null;
-    let editingDetailId = null;
+    let folderStack = [];
+    let currentFolderId = null;
+    let editingFolderId = null;
+    let editingItemId = null;
 
     loadStorage();
     addGridBtn.addEventListener ("click", () => {
         editGenreModal.classList.remove("hidden");
     });
+    addSubGridBtn.addEventListener ("click", () => {
+        editGenreModal.classList.remove("hidden");
+    });
     genreCancelBtn.addEventListener("click", () => {
         editGenreModal.classList.add("hidden");
     });
-    genreSubmitBtn.addEventListener("click", handleGenreSubmit);
-    closeDetailBtn.addEventListener("click", () => {
-        detailSection.classList.add("hidden");
-        genreListSection.classList.remove("hidden");
-    });
+    genreSubmitBtn.addEventListener("click", handleParentSubmit);
+    closeDetailBtn.addEventListener("click", goBack);
     addItemBtn.addEventListener("click", () => {
-        editingDetailId = null;
         editDetailModal.classList.remove("hidden");
     });
+    document.addEventListener("click", openControlModal);
     detailCancelBtn.addEventListener("click", () => {
         editDetailModal.classList.add("hidden");
     });
     detailSubmitBtn.addEventListener("click", handleDetailSubmit);
+    editDetailBtn.addEventListener("click", openEditDetailModal);
+    deleteDetailBtn.addEventListener("click", deleteDetail);
 
-
-    function renderGenreList() {
-        genreWrapper.querySelectorAll(".genre-grid:not(#add-grid)").forEach(el => el.remove());
-
-        interestRecord.forEach(genre => {
-            const div = document.createElement("div");
-            div.className = "genre-grid sweep-hover";
-            div.dataset.genreId = genre.id;
-
-            div.innerHTML = `
-                <h3>${genre.name}</h3>
-                <p>${genre.date}<p>
-            `;
-
-            div.addEventListener("click", () => {
-                renderGenreDetail(genre.id);
-            });
-
-            genreWrapper.appendChild(div);
-        })
+    function findNodeById(nodes, id) {
+        for (const node of nodes) {
+            if (node.id === id) return node;
+            if (node.type === "folder" && node.children) {
+                const found = findNodeById(node.children, id);
+                if (found) return found;
+            }
+        }
+        return null;
     }
 
-    function renderGenreDetail(genreId) { 
-        selectedGenreId = genreId;
-        const genre = interestRecord.find(g => g.id === genreId);
-        if (!genre) return;
+    function renderGenreDetail(folderId) {
+        if (folderId === null) {
+            renderGenreList(interestRecord, rootGenreWrapper);
+            genreListSection.classList.remove("hidden");
+            detailSection.classList.add("hidden");
+            return;
+        }
 
-        genreTitle.textContent = genre.name;
+        const folder = folderId === null 
+            ? {children: interestRecord}
+            : findNodeById(interestRecord, folderId);
+        if (!folder) return;
 
-        entryList.querySelectorAll(".entry-item:not(#add-item)").forEach(el => el.remove());
+        genreTitle.innerText = folder.name;
 
-        genre.details.forEach(detail => {
-            const li = document.createElement("li");
-            li.className = "entry-item";
+        entryList.querySelectorAll(".entry-item:not(#add-item)").forEach(e => e.remove());
 
-            if(detail.type == "youtube") {
-                li.innerHTML = `
-                    <iframe 
-                        class="entry-thumbnail" 
-                        width="368" 
-                        height="207" 
-                        src="https://www.youtube.com/embed/${detail.source}" 
-                        title="YouTube video player" 
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                    ></iframe>
-                    <div class="entry-info">
-                        <a
-                            href="https://www.youtube.com/watch?v=${detail.source}"
-                            target="_blank"
-                            class="entry-title"
-                        >${detail.title}</a>
-                    </div>
-                    <p class="entry-date">${detail.date}</p>
-                    <p class="entry-memo">Memo</p>
-                    <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
-                `;
-            } else {
-                li.innerHTML = `
-                    <div class="favicon">
-                        <img src="https://www.google.com/s2/favicons?domain=${detail.source}">
-                    </div>
-                    <div class="entry-info">
-                        <a 
-                            href="${detail.source}" 
-                            target="_blank" 
-                            class="entry-title"
-                        >${detail.title}</a>
-                    </div>
-                    <p class="entry-date">${detail.date}</p>
-                    <p class="entry-memo">Memo</p>
-                    <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
-                `
-            }
-            entryList.appendChild(li);
-        });
+        renderGenreList(folder.children, subGenreWrapper);
 
+        folder.children.forEach(child => {
+            if (child.type === "folder") return;
+            renderDetailItem(child);
+        })
         genreListSection.classList.add("hidden");
         detailSection.classList.remove("hidden");
     }
 
-    function handleGenreSubmit (e) {
+    function renderGenreList(children, wrapper) {
+        wrapper.querySelectorAll(".genre-grid:not(#add-grid)").forEach(e => e.remove());
+
+        children.forEach(child => {
+            if (child.type !== "folder") return;
+
+            const div = document.createElement("div");
+            div.className = "genre-grid sweep-hover";
+            div.dataset.nodeId = child.id;
+
+            div.innerHTML = `
+                <h3>${child.name}<h3>
+                <p>${child.date}</p>
+            `;
+
+            // CurrentFolderId = child.id?
+            div.addEventListener("click", () => {
+                folderStack.push(currentFolderId);
+                currentFolderId = child.id;
+                renderGenreDetail(child.id);
+            });
+
+            wrapper.appendChild(div);
+        })
+    }
+
+    function renderDetailItem(detail) {
+        const li = document.createElement("li");
+        li.className = "entry-item";
+        li.dataset.detailId = detail.id;
+
+        if(detail.type == "youtube") {
+            li.innerHTML = `
+                <iframe 
+                    class="entry-thumbnail" 
+                    width="368" 
+                    height="207" 
+                    src="https://www.youtube.com/embed/${detail.source}" 
+                    title="YouTube video player" 
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                ></iframe>
+                <div class="entry-info">
+                    <a
+                        href="https://www.youtube.com/watch?v=${detail.source}"
+                        target="_blank"
+                        class="entry-title"
+                    >${detail.title}</a>
+                </div>
+                <p class="entry-date">${detail.date}</p>
+                <p class="entry-memo">Memo</p>
+                <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+            `;
+        } else {
+            li.innerHTML = `
+                <div class="favicon">
+                    <img src="https://www.google.com/s2/favicons?domain=${detail.source}">
+                </div>
+                <div class="entry-info">
+                    <a 
+                        href="${detail.source}" 
+                        target="_blank" 
+                        class="entry-title"
+                    >${detail.title}</a>
+                </div>
+                <p class="entry-date">${detail.date}</p>
+                <p class="entry-memo">Memo</p>
+                <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+            `;
+        }
+
+        entryList.appendChild(li);
+    }
+
+    function handleParentSubmit(e) {
         e.preventDefault();
 
         const name = document.getElementById("genre-name").value.trim();
@@ -133,26 +175,40 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (editGenreId !== null) {
-            const genre = interestRecord[editGenreId]
-            genre.name = name;
-            genre.date = date;
-            editGenreId = null;
+        let parentChildren;
+
+        if (currentFolderId === null) {
+            parentChildren = interestRecord;
         } else {
-            const newGenre = {
+            const parent = findNodeById(interestRecord, currentFolderId);
+            if (!parent) return;
+            parentChildren = parent.children;
+        }
+
+        if (editingFolderId !== null) {
+            const folder = findNodeById(interestRecord, editingFolderId);
+            if (!folder || folder.type !== "folder") return;
+
+            folder.name = name;
+            folder.date = date;
+            editingFolderId = null;
+        } else {
+            parentChildren.push({
                 id: Date.now(),
+                type: "folder",
                 name,
                 date,
                 overallMemo: "",
-                details: []
-            };
-            interestRecord.push(newGenre);
+                children: []
+            });
         }
+
         editGenreModal.classList.add("hidden");
         saveStorage();
         document.getElementById("genre-name").value = "";
         document.getElementById("date").value = "";
-        renderGenreList();
+        renderGenreDetail(currentFolderId);
+        console.log(interestRecord);
     }
 
     function handleDetailSubmit(e) {
@@ -163,40 +219,93 @@ document.addEventListener("DOMContentLoaded", () => {
         const date = document.getElementById("detail-date").value || getTodayString();
         const memo = document.getElementById("detail-memo").value;
 
-        if(!source) {
-        alert('input Website or Video at least');
-        return;
-        }
+        const parent = findNodeById(interestRecord, currentFolderId);
+        if (!parent) return;
 
-        const genre = interestRecord.find(g => g.id === selectedGenreId);
-        if (!genre) return;
+        if (editingItemId !== null) {
+            const item = parent.children.find(c => c.id === editingItemId);
+            if (!item) return;
 
-        const youtubeId = extractYouTubeId(source);
-        const detailData = {
-            type: youtubeId ? "youtube" : "link",
-            source: youtubeId ?? source,
-            title,
-            date,
-            memo
-        };
+            item.type = extractYouTubeId(source) ? "youtube" : "link";
+            item.source = extractYouTubeId(source) ?? source;
+            item.title = title;
+            item.date = date;
+            item.memo = memo;
 
-        if (editingDetailId !== null) {
-            const detail = genre.details.find(d => d.id === editingDetailId);
-            Object.assign(detail, detailData);
-            editingDetailId = null;
+            editingItemId = null;
         } else {
-            genre.details.push({
+            parent.children.push({
                 id: Date.now(),
-                ...detailData
+                type: extractYouTubeId(source) ? "youtube" : "link",
+                source: extractYouTubeId(source) ?? source,
+                title,
+                date,
+                memo
             });
         }
-        editDetailModal.classList.add("hidden");
+
         saveStorage();
-        document.getElementById("detail-source").value = "";
-        document.getElementById("detail-title").value = "";
-        document.getElementById("detail-date").value = "";
-        document.getElementById("detail-memo").value = "";
-        renderGenreDetail(selectedGenreId);
+        editDetailModal.classList.add("hidden");
+        renderGenreDetail(currentFolderId);
+    }
+
+    function goBack() {
+        currentFolderId = folderStack.pop() ?? null;
+        renderGenreDetail(currentFolderId);
+    }
+
+    function openEditDetailModal () {
+        if (!editingItemId) return;
+
+        const parent = findNodeById(interestRecord, currentFolderId);
+        if (!parent) return;
+
+        const item = parent.children.find(d => d.id === editingItemId);
+        if (!item)  return;
+
+        editDetailType.innerText = "Edit Detail";
+        detailSubmitBtn.innerText = "Edit";
+        document.getElementById("detail-source").value = item.type ==="youtube" ? `https://www.youtube.com/watch?v=${item.source}` : item.source;
+        document.getElementById("detail-title").value = item.title;
+        document.getElementById("detail-date").value = item.date;
+        document.getElementById("detail-memo").value = item.memo;
+
+        editDetailModal.classList.remove("hidden");
+        controlDetailModal.classList.add("hidden");
+    }
+
+    function deleteDetail () {
+        if (!editingItemId) return;
+
+        const parent = findNodeById(interestRecord, currentFolderId);
+        if (!parent) return;
+
+        parent.children = parent.children.filter(d => d.id !== editingItemId);
+
+        editingItemId = null;
+        saveStorage();
+        renderGenreDetail(currentFolderId);
+        controlDetailModal.classList.add("hidden");
+    }
+
+    function openControlModal(e) {
+        const ellipsis = e.target.closest(".entry-ellipsis");
+
+        if (!ellipsis) {
+            controlDetailModal.classList.add("hidden");
+            return;
+        }
+
+        const item = ellipsis.closest(".entry-item");
+        const detailId = Number(item.dataset.detailId);
+        editingItemId = detailId;
+        
+        const rect = ellipsis.getBoundingClientRect();
+
+        controlDetailModal.style.position = "absolute";
+        controlDetailModal.style.top = `${rect.bottom + window.scrollY}px`;
+        controlDetailModal.style.left = `${rect.left + window.scrollX - 20}px`;
+        controlDetailModal.classList.remove("hidden");
     }
 
     function saveStorage() {
@@ -207,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const saved = localStorage.getItem("interestRecord");
         if (saved) {
             interestRecord = JSON.parse(saved);
-            renderGenreList();
+            renderGenreDetail(null);
         }
     }
 

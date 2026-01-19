@@ -73,7 +73,7 @@ body {
 }
 
 #genre-detail main .wrapper {
-    padding-bottom: 10px;
+    padding: 2px 0 10px 2px;
     margin: 5px 15px;
     overflow-x: scroll;
 }
@@ -140,8 +140,8 @@ body {
 .entry-list {
     display: flex;
     flex-direction: row;
-    padding: 0;
-    margin: 0 15px 10px 15px;
+    padding: 2px 0;
+    margin: 5px 15px 10px 15px;
     overflow-x: scroll;
 }
 
@@ -204,8 +204,7 @@ body {
     border: 1.5px dashed rgba(var(--colour1-accent), 0.3);
     min-height: 210px;
     --sweep-inset: -8vw;
-    --sweep-width: 150px;
-    --sweep-distance: 97vw;
+    --sweep-width: 130px;
 }
 
 #add-item i {
@@ -296,6 +295,24 @@ body {
 #genre-submit-btn:hover, #detail-submit-btn:hover {
     border: 1px solid rgb(var(--colour1-background));
     box-shadow: none;
+}
+
+#control-genre-modal, #control-detail-modal {
+    background-color: rgb(var(--colour1-background));
+    box-shadow: 1px 1px 10px grey;
+    border-radius: 3px;
+    width: 75px;
+    padding: 3px 0;
+    margin: 0;
+}
+
+#control-genre-modal p, #control-detail-modal p {
+    padding: 10px;
+    margin: 0;
+}
+
+#control-genre-modal p:hover, #control-detail-modal p:hover {
+    background-color: rgba(var(--colour1-accent), 0.05);
 }
 
 .hidden {
