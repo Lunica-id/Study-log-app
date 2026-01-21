@@ -73,8 +73,8 @@ body {
 }
 
 #genre-detail main .wrapper {
-    padding: 2px 0 10px 2px;
-    margin: 5px 15px;
+    padding: 2px 17px 10px 17px;
+    margin: 5px 0;
     overflow-x: scroll;
 }
 
@@ -82,7 +82,7 @@ body {
     position: relative;
     border: 1px solid rgb(var(--colour1-text));
     border-radius: 3px;
-    width: 350px;
+    min-width: 350px;
     height: 200px;
     padding: 0 8px;
     text-align: center;
@@ -140,8 +140,8 @@ body {
 .entry-list {
     display: flex;
     flex-direction: row;
-    padding: 2px 0;
-    margin: 5px 15px 10px 15px;
+    margin: 2px 0;
+    padding: 5px 15px 10px 15px;
     overflow-x: scroll;
 }
 
@@ -203,8 +203,9 @@ body {
     position: relative;
     border: 1.5px dashed rgba(var(--colour1-accent), 0.3);
     min-height: 210px;
-    --sweep-inset: -8vw;
+    --sweep-inset: -3vw;
     --sweep-width: 130px;
+    --sweep-distance: 390%;
 }
 
 #add-item i {
@@ -297,21 +298,28 @@ body {
     box-shadow: none;
 }
 
-#control-genre-modal, #control-detail-modal {
+#control-folder-modal, #control-detail-modal {
     background-color: rgb(var(--colour1-background));
     box-shadow: 1px 1px 10px grey;
     border-radius: 3px;
     width: 75px;
     padding: 3px 0;
     margin: 0;
+    z-index: 100;
 }
 
-#control-genre-modal p, #control-detail-modal p {
+#control-folder-modal {
+    position: absolute;
+    right: 30px;
+    top: 80px;
+}
+
+#control-folder-modal p, #control-detail-modal p {
     padding: 10px;
     margin: 0;
 }
 
-#control-genre-modal p:hover, #control-detail-modal p:hover {
+#control-folder-modal p:hover, #control-detail-modal p:hover {
     background-color: rgba(var(--colour1-accent), 0.05);
 }
 

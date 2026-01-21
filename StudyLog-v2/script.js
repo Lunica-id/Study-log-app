@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const addItemBtn = document.getElementById("add-item");
     const detailSection = document.getElementById("genre-detail");
     const genreTitle = detailSection.querySelector(".genre-title");
+    const detailEllipsis = document.getElementById("detail-ellipsis");
     const entryList = detailSection.querySelector(".entry-list");
     const closeDetailBtn = document.getElementById("close-detail-btn");
     const subGenreWrapper = document.querySelector("#genre-detail .wrapper");
@@ -17,10 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const editDetailType = document.getElementById("edit-detail-type");
     const detailCancelBtn = document.getElementById("detail-cancel-btn");
     const detailSubmitBtn = document.getElementById("detail-submit-btn");
+    const controlFolderModal = document.getElementById("control-folder-modal");
+    const editFolderBtn = document.getElementById("edit-folder-btn");
+    const deleteFolderBtn = document.getElementById("delete-folder-btn");
     const controlDetailModal = document.getElementById("control-detail-modal");
     const editDetailBtn = document.getElementById("edit-detail-btn");
     const deleteDetailBtn = document.getElementById("delete-detail-btn");
-
 
     let interestRecord = [];
     let folderStack = [];
@@ -43,7 +46,19 @@ document.addEventListener("DOMContentLoaded", () => {
     addItemBtn.addEventListener("click", () => {
         editDetailModal.classList.remove("hidden");
     });
-    document.addEventListener("click", openControlModal);
+    detailEllipsis.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openControlFolderModal()
+    });
+    editFolderBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openEditFolderModal();
+    });
+    document.addEventListener("click", (e) => { 
+        if (!controlFolderModal.contains(e.target) && !controlFolderModal.classList.contains("hidden")) controlFolderModal.classList.add("hidden");
+    })
+    deleteFolderBtn.addEventListener("click", deleteFolder);
+    entryList.addEventListener("click", openControlDetailModal);
     detailCancelBtn.addEventListener("click", () => {
         editDetailModal.classList.add("hidden");
     });
@@ -90,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderGenreList(children, wrapper) {
-        wrapper.querySelectorAll(".genre-grid:not(#add-grid)").forEach(e => e.remove());
+        wrapper.querySelectorAll(".genre-grid:not(#add-grid, #add-subgrid)").forEach(e => e.remove());
 
         children.forEach(child => {
             if (child.type !== "folder") return;
@@ -246,12 +261,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
         saveStorage();
         editDetailModal.classList.add("hidden");
+        document.getElementById("detail-source").value = "";
+        document.getElementById("detail-title").value = "";
+        document.getElementById("detail-date").value = "";
+        document.getElementById("detail-memo").value = "";
         renderGenreDetail(currentFolderId);
     }
 
     function goBack() {
         currentFolderId = folderStack.pop() ?? null;
         renderGenreDetail(currentFolderId);
+    }
+
+    function openEditFolderModal () {
+        if (!editingFolderId) return;
+
+        const folder = findNodeById(interestRecord, editingFolderId);
+        if (!folder || folder.type !== "folder") return;
+
+        editGenreType.innerText = "Edit Folder";
+        genreSubmitBtn.innerText = "Edit";
+
+        document.getElementById("genre-name").value = folder.name;
+        document.getElementById("date").value = folder.date;
+
+        editGenreModal.classList.remove("hidden");
+        controlFolderModal.classList.add("hidden");
+    }
+
+    function deleteFolder() { 
+        if (!editingFolderId) return;
+
+        const parentId = folderStack[folderStack.length - 1] ?? null;
+        const parent = parentId ? findNodeById(interestRecord, parentId) : {children: interestRecord};
+        if (!parent) return;
+
+        parent.children = parent.children.filter(f => f.id !== editingFolderId);
+        editingFolderId = null;
+        saveStorage();
+        goBack();
+        renderGenreDetail(currentFolderId);
+        controlFolderModal.classList.add("hidden");
     }
 
     function openEditDetailModal () {
@@ -288,7 +338,12 @@ document.addEventListener("DOMContentLoaded", () => {
         controlDetailModal.classList.add("hidden");
     }
 
-    function openControlModal(e) {
+    function openControlFolderModal() {
+        editingFolderId = currentFolderId;
+        controlFolderModal.classList.remove("hidden");
+    }
+
+    function openControlDetailModal(e) {
         const ellipsis = e.target.closest(".entry-ellipsis");
 
         if (!ellipsis) {
