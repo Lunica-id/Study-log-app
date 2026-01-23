@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const genreTitle = detailSection.querySelector(".genre-title");
     const detailEllipsis = document.getElementById("detail-ellipsis");
     const entryList = detailSection.querySelector(".entry-list");
+    const overallMemo = document.querySelector(".overall-memo");
     const closeDetailBtn = document.getElementById("close-detail-btn");
     const subGenreWrapper = document.querySelector("#genre-detail .wrapper");
     const addSubGridBtn = document.getElementById("add-subgrid");
@@ -42,6 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
         editGenreModal.classList.add("hidden");
     });
     genreSubmitBtn.addEventListener("click", handleParentSubmit);
+    overallMemo.addEventListener("input", (e) => {
+        const folder = findNodeById(interestRecord, currentFolderId);
+        if (!folder) return;
+        folder.overallMemo = e.target.value;
+        saveStorage();
+    });
     closeDetailBtn.addEventListener("click", goBack);
     addItemBtn.addEventListener("click", () => {
         editDetailModal.classList.remove("hidden");
@@ -100,6 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (child.type === "folder") return;
             renderDetailItem(child);
         })
+        overallMemo.value = folder.overallMemo || "";
         genreListSection.classList.add("hidden");
         detailSection.classList.remove("hidden");
     }
@@ -139,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
             li.innerHTML = `
                 <iframe 
                     class="entry-thumbnail" 
-                    width="368" 
+                    width="387" 
                     height="207" 
                     src="https://www.youtube.com/embed/${detail.source}" 
                     title="YouTube video player" 
@@ -223,7 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("genre-name").value = "";
         document.getElementById("date").value = "";
         renderGenreDetail(currentFolderId);
-        console.log(interestRecord);
     }
 
     function handleDetailSubmit(e) {
