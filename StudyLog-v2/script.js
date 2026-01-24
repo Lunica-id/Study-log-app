@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const genreSubmitBtn = document.getElementById("genre-submit-btn");
     const editDetailModal = document.getElementById("edit-detail-modal");
     const editDetailType = document.getElementById("edit-detail-type");
+    const typeSelect = document.getElementById("detail-type");
     const detailCancelBtn = document.getElementById("detail-cancel-btn");
     const detailSubmitBtn = document.getElementById("detail-submit-btn");
     const controlFolderModal = document.getElementById("control-folder-modal");
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const editDetailBtn = document.getElementById("edit-detail-btn");
     const deleteDetailBtn = document.getElementById("delete-detail-btn");
 
-    let interestRecord = [];
+    let root = { id: null, name: "root", type: "folder", children: []};
     let folderStack = [];
     let currentFolderId = null;
     let editingFolderId = null;
@@ -43,8 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
         editGenreModal.classList.add("hidden");
     });
     genreSubmitBtn.addEventListener("click", handleParentSubmit);
+    typeSelect.addEventListener("change", updateDetailForm);
     overallMemo.addEventListener("input", (e) => {
-        const folder = findNodeById(interestRecord, currentFolderId);
+        const folder = findNodeById(root.children, currentFolderId);
         if (!folder) return;
         folder.overallMemo = e.target.value;
         saveStorage();
@@ -52,6 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeDetailBtn.addEventListener("click", goBack);
     addItemBtn.addEventListener("click", () => {
         editDetailModal.classList.remove("hidden");
+        updateDetailForm();
     });
     detailEllipsis.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -68,6 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
     entryList.addEventListener("click", openControlDetailModal);
     detailCancelBtn.addEventListener("click", () => {
         editDetailModal.classList.add("hidden");
+        document.getElementById("detail-type").value = "link";
+        document.getElementById("detail-source").value = "";
+        document.getElementById("detail-title").value = "";
+        document.getElementById("detail-date").value = "";
+        document.getElementById("detail-memo").value = "";
     });
     detailSubmitBtn.addEventListener("click", handleDetailSubmit);
     editDetailBtn.addEventListener("click", openEditDetailModal);
@@ -86,15 +94,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderGenreDetail(folderId) {
         if (folderId === null) {
-            renderGenreList(interestRecord, rootGenreWrapper);
+            renderGenreList(root.children, rootGenreWrapper);
             genreListSection.classList.remove("hidden");
             detailSection.classList.add("hidden");
             return;
         }
 
         const folder = folderId === null 
-            ? {children: interestRecord}
-            : findNodeById(interestRecord, folderId);
+            ? root
+            : findNodeById(root.children, folderId);
         if (!folder) return;
 
         genreTitle.innerText = folder.name;
@@ -127,7 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p>${child.date}</p>
             `;
 
-            // CurrentFolderId = child.id?
             div.addEventListener("click", () => {
                 folderStack.push(currentFolderId);
                 currentFolderId = child.id;
@@ -143,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
         li.className = "entry-item";
         li.dataset.detailId = detail.id;
 
-        if(detail.type == "youtube") {
+        if(detail.type === "youtube") {
             li.innerHTML = `
                 <iframe 
                     class="entry-thumbnail" 
@@ -166,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p class="entry-memo">Memo</p>
                 <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
             `;
-        } else {
+        } else if (detail.type === "link") {
             li.innerHTML = `
                 <div class="favicon">
                     <img src="https://www.google.com/s2/favicons?domain=${detail.source}">
@@ -177,6 +184,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         target="_blank" 
                         class="entry-title"
                     >${detail.title}</a>
+                </div>
+                <p class="entry-date">${detail.date}</p>
+                <p class="entry-memo">Memo</p>
+                <div class="entry-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+            `;
+        } else if (detail.type === "book") {
+            li.innerHTML = `
+                <div class="book-icon">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+                <div class="entry-info">
+                    <p class="entry-title">${detail.title}</p>
                 </div>
                 <p class="entry-date">${detail.date}</p>
                 <p class="entry-memo">Memo</p>
@@ -201,15 +220,15 @@ document.addEventListener("DOMContentLoaded", () => {
         let parentChildren;
 
         if (currentFolderId === null) {
-            parentChildren = interestRecord;
+            parentChildren = root.children;
         } else {
-            const parent = findNodeById(interestRecord, currentFolderId);
+            const parent = findNodeById(root.children, currentFolderId);
             if (!parent) return;
             parentChildren = parent.children;
         }
 
         if (editingFolderId !== null) {
-            const folder = findNodeById(interestRecord, editingFolderId);
+            const folder = findNodeById(root.children, editingFolderId);
             if (!folder || folder.type !== "folder") return;
 
             folder.name = name;
@@ -235,21 +254,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function handleDetailSubmit(e) {
         e.preventDefault();
-
-        const source = document.getElementById("detail-source").value.trim();
+        const type = document.getElementById("detail-type").value;
+        const source = document.getElementById("detail-source").value;
+        const isbn = document.getElementById("detail-isbn").value || "-";
         const title = document.getElementById("detail-title").value;
         const date = document.getElementById("detail-date").value || getTodayString();
         const memo = document.getElementById("detail-memo").value;
 
-        const parent = findNodeById(interestRecord, currentFolderId);
+        const parent = findNodeById(root.children, currentFolderId);
         if (!parent) return;
 
         if (editingItemId !== null) {
             const item = parent.children.find(c => c.id === editingItemId);
             if (!item) return;
 
-            item.type = extractYouTubeId(source) ? "youtube" : "link";
+            item.type = type;
             item.source = extractYouTubeId(source) ?? source;
+            item.isbn = isbn;
             item.title = title;
             item.date = date;
             item.memo = memo;
@@ -258,8 +279,9 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             parent.children.push({
                 id: Date.now(),
-                type: extractYouTubeId(source) ? "youtube" : "link",
+                type: type,
                 source: extractYouTubeId(source) ?? source,
+                isbn,
                 title,
                 date,
                 memo
@@ -268,11 +290,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         saveStorage();
         editDetailModal.classList.add("hidden");
+        document.getElementById("detail-type").value = "link";
         document.getElementById("detail-source").value = "";
         document.getElementById("detail-title").value = "";
         document.getElementById("detail-date").value = "";
         document.getElementById("detail-memo").value = "";
         renderGenreDetail(currentFolderId);
+    }
+
+    function updateDetailForm() {
+        const selectedType = typeSelect.value;
+        const typeBlocks = document.querySelectorAll("#detail-form [data-type]");
+
+        typeBlocks.forEach(block => {
+            const types = block.dataset.type.split(" ");
+            block.classList.toggle("hidden", !types.includes(selectedType));
+        });
     }
 
     function goBack() {
@@ -283,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function openEditFolderModal () {
         if (!editingFolderId) return;
 
-        const folder = findNodeById(interestRecord, editingFolderId);
+        const folder = findNodeById(root.children, editingFolderId);
         if (!folder || folder.type !== "folder") return;
 
         editGenreType.innerText = "Edit Folder";
@@ -300,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!editingFolderId) return;
 
         const parentId = folderStack[folderStack.length - 1] ?? null;
-        const parent = parentId ? findNodeById(interestRecord, parentId) : {children: interestRecord};
+        const parent = parentId ? findNodeById(root.children, parentId) : root;
         if (!parent) return;
 
         parent.children = parent.children.filter(f => f.id !== editingFolderId);
@@ -314,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function openEditDetailModal () {
         if (!editingItemId) return;
 
-        const parent = findNodeById(interestRecord, currentFolderId);
+        const parent = findNodeById(root.children, currentFolderId);
         if (!parent) return;
 
         const item = parent.children.find(d => d.id === editingItemId);
@@ -322,10 +355,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         editDetailType.innerText = "Edit Detail";
         detailSubmitBtn.innerText = "Edit";
+        document.getElementById("detail-type").value = item.type;
         document.getElementById("detail-source").value = item.type ==="youtube" ? `https://www.youtube.com/watch?v=${item.source}` : item.source;
+        document.getElementById("detail-isbn").value = item.isbn;
         document.getElementById("detail-title").value = item.title;
         document.getElementById("detail-date").value = item.date;
         document.getElementById("detail-memo").value = item.memo;
+        updateDetailForm();
 
         editDetailModal.classList.remove("hidden");
         controlDetailModal.classList.add("hidden");
@@ -334,7 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function deleteDetail () {
         if (!editingItemId) return;
 
-        const parent = findNodeById(interestRecord, currentFolderId);
+        const parent = findNodeById(root.children, currentFolderId);
         if (!parent) return;
 
         parent.children = parent.children.filter(d => d.id !== editingItemId);
@@ -371,15 +407,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function saveStorage() {
-        localStorage.setItem("interestRecord", JSON.stringify(interestRecord));
+        localStorage.setItem("interestRecord", JSON.stringify(root));
     }
 
     function loadStorage() {
         const saved = localStorage.getItem("interestRecord");
-        if (saved) {
-            interestRecord = JSON.parse(saved);
-            renderGenreDetail(null);
-        }
+        if (!saved) return;
+        root = JSON.parse(saved); 
+        renderGenreDetail(null);
     }
 
     function getTodayString() {
@@ -404,4 +439,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return null;
     }
+
 })

@@ -162,7 +162,7 @@ body {
     grid-area: 1 / 1 / 4 / 9;
 }
 
-.favicon {
+.favicon, .book-icon {
     grid-area: 1 / 1 / 4 / 9;
     margin: auto 0;
 }
@@ -173,6 +173,10 @@ body {
     padding: 10px;
     background-color: rgba(var(--colour1-accent), 0.05);
     border-radius: 4px;
+}
+
+.book-icon i {
+    font-size: 30px;
 }
 
 .entry-info {
@@ -253,15 +257,17 @@ body {
     padding: 5px 0;
 }
 
-#genre-form input, #detail-form input {
+#genre-form input, #detail-form input, #detail-form select {
     height: 40px;
+    width: 100%;
     padding: 5px 10px;
-    margin: 0 3px 5px 3px;
+    margin: 0 0 5px 0;
     font-size: 22px;
 }
 
 #detail-form textarea {
     height: 80px;
+    width: 100%;
 }
 
 #genre-btn, #detail-btn {

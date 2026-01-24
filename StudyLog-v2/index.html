@@ -67,17 +67,22 @@
                         <option value="book">Book</option>
                         <option value="document">Document</option>
                     </select>
-                    <div id="link-field">
+                    <div data-type="link youtube document">
                         <label for="detail-source">URL</label>
                         <input type="url" id="detail-source" name="detail-source">
                     </div>
-                    
-                    <label for="detail-title">Title</label>
-                    <input type="text" id="detail-title" name="detail-title" required>
-                    <label for="detail-date">Date</label>
-                    <input type="date" id="detail-date" name="detail-date">
-                    <label for="detail-memo">Memo</label>
-                    <textarea id="detail-memo" name="detail-memo"></textarea>
+                    <div data-type="book">
+                        <label for="detail-isbn">ISBN</label>
+                        <input type="text" id="detail-isbn">
+                    </div>
+                    <div data-type="link youtube book document">
+                        <label for="detail-title">Title</label>
+                        <input type="text" id="detail-title" name="detail-title" required>
+                        <label for="detail-date">Date</label>
+                        <input type="date" id="detail-date" name="detail-date">
+                        <label for="detail-memo">Memo</label>
+                        <textarea id="detail-memo" name="detail-memo"></textarea>
+                    </div>
                 </form>
                 <div id="detail-btn">
                     <button id="detail-cancel-btn">Cancel</button>
