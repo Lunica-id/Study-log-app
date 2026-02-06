@@ -10,6 +10,7 @@
     <body>
         <section id="genre-list" class="">
             <h1>Interest Record</h1>
+            <button id="home-ellipsis"><i class="fa-solid fa-ellipsis-vertical"></i></button>
             <div class="wrapper">
                 <div id="add-grid" class="genre-grid sweep-hover">
                     <i class="fa-solid fa-plus"></i>
@@ -41,6 +42,22 @@
             </footer>
         </section>
 
+        <div id="control-home-modal" class="hidden">
+            <p id="import-btn" class="control-modal">Import file</p>
+            <p id="export-btn" class="control-modal">Export file</p>
+        </div>
+        <div id="import-file-modal" class="overlay hidden">
+            <div id="import-file-wrapper">
+                <h2>Import File</h2>
+                <form id="import-form">
+                    <input type="file" id="import-file" accept=".json">
+                </form>
+                <div id="import-btn-wrapper">
+                    <button id="import-cancel-btn">Cancel</button>
+                    <button id="import-submit-btn">Import</button>
+                </div>
+            </div>
+        </div>
         <div id="edit-genre-modal" class="overlay hidden">
             <div id="edit-genre">
                 <h2 id="edit-genre-type">Create New Genre</h2>

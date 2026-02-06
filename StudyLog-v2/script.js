@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const genreListSection = document.getElementById("genre-list");
+    const homeEllipsis = document.getElementById("home-ellipsis");
     const rootGenreWrapper = genreListSection.querySelector("#genre-list .wrapper");
     const addGridBtn = document.getElementById("add-grid");
     const addItemBtn = document.getElementById("add-item");
@@ -15,6 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const editGenreType = document.getElementById("edit-genre-type");
     const genreCancelBtn = document.getElementById("genre-cancel-btn");
     const genreSubmitBtn = document.getElementById("genre-submit-btn");
+    const controlHomeModal = document.getElementById("control-home-modal");
+    const importBtn = document.getElementById("import-btn");
+    const exportBtn = document.getElementById("export-btn");
+    const importFileModal = document.getElementById("import-file-modal");
+    const importCancelBtn = document.getElementById("import-cancel-btn");
+    const importSubmitBtn = document.getElementById("import-submit-btn");
     const editDetailModal = document.getElementById("edit-detail-modal");
     const editDetailType = document.getElementById("edit-detail-type");
     const typeSelect = document.getElementById("detail-type");
@@ -34,6 +41,17 @@ document.addEventListener("DOMContentLoaded", () => {
     let editingItemId = null;
 
     loadStorage();
+    document.addEventListener("click", (e) => { 
+        if (!controlHomeModal.contains(e.target) && !controlHomeModal.classList.contains("hidden")) {
+            controlHomeModal.classList.add("hidden");
+        } else if (!controlFolderModal.contains(e.target) && !controlFolderModal.classList.contains("hidden")) {
+            controlFolderModal.classList.add("hidden");
+        }
+    });
+    homeEllipsis.addEventListener("click", (e) => {
+        e.stopPropagation();
+        controlHomeModal.classList.remove("hidden");
+    })
     addGridBtn.addEventListener ("click", () => {
         editGenreModal.classList.remove("hidden");
     });
@@ -64,9 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
         e.stopPropagation();
         openEditFolderModal();
     });
-    document.addEventListener("click", (e) => { 
-        if (!controlFolderModal.contains(e.target) && !controlFolderModal.classList.contains("hidden")) controlFolderModal.classList.add("hidden");
-    })
     deleteFolderBtn.addEventListener("click", deleteFolder);
     entryList.addEventListener("click", openControlDetailModal);
     detailCancelBtn.addEventListener("click", () => {
@@ -78,6 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("detail-memo").value = "";
     });
     detailSubmitBtn.addEventListener("click", handleDetailSubmit);
+    importBtn.addEventListener("click", () => {
+        controlHomeModal.classList.add("hidden");
+        importFileModal.classList.remove("hidden");
+    });
+    importCancelBtn.addEventListener("click", ()=> {
+        importFileModal.classList.add("hidden");
+    })
+    importSubmitBtn.addEventListener("click", importData);
+    exportBtn.addEventListener("click", exportData);
     editDetailBtn.addEventListener("click", openEditDetailModal);
     deleteDetailBtn.addEventListener("click", deleteDetail);
 
@@ -154,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
             li.innerHTML = `
                 <iframe 
                     class="entry-thumbnail" 
-                    width="387" 
+                    width="367" 
                     height="207" 
                     src="https://www.youtube.com/embed/${detail.source}" 
                     title="YouTube video player" 
@@ -415,6 +439,50 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!saved) return;
         root = JSON.parse(saved); 
         renderGenreDetail(null);
+    }
+
+    function importData() {
+        const file = document.getElementById("import-file").files[0];
+        if (!file) {
+            alert("Please select a file");
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            try {
+                const parsed = JSON.parse(reader.result);
+                root = parsed;
+                saveStorage();
+                renderGenreDetail(null);
+                importFileModal.classList.add("hidden");
+            } catch {
+                alert("Invalid file");
+            }
+        };
+
+        reader.readAsText(file);
+        document.getElementById("import-file").value = "";
+        importFileModal.classList.add("hidden");
+    }
+
+    function exportData() {
+        const data = localStorage.getItem("interestRecord");
+        if (!data) {
+            alert("No data to back up");
+            return;
+        }
+
+        const blob = new Blob([data], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `interestRecord_${getTodayString()}.json`;
+        a.click();
+
+        URL.revokeObjectURL(url);
     }
 
     function getTodayString() {
