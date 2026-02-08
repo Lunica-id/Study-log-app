@@ -78,6 +78,7 @@ body {
 
 #genre-list .wrapper {
     flex-wrap: wrap;
+    justify-content: center;
     margin: 20px;
 }
 
