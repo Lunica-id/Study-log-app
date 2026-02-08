@@ -71,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     closeDetailBtn.addEventListener("click", goBack);
     addItemBtn.addEventListener("click", () => {
+        editDetailType.innerText = "Create New Detail";
+        detailSubmitBtn.innerText = "Create";
         editDetailModal.classList.remove("hidden");
         updateDetailForm();
     });
@@ -91,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("detail-title").value = "";
         document.getElementById("detail-date").value = "";
         document.getElementById("detail-memo").value = "";
+        editingItemId = null;
     });
     detailSubmitBtn.addEventListener("click", handleDetailSubmit);
     importBtn.addEventListener("click", () => {
